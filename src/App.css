@@ -2,105 +2,137 @@
   display: flex;
   justify-content: center;
 }
+.grey-background {
+  background-color: rgb(197, 191, 191);;
+}
 .board-grid{
   display: grid;
   height: 500px;
   width: 1000px;
   grid-template-columns: repeat(8, 1fr);
-  grid-template-rows: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
   margin-top: 20px;
+}
+.turn-box{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px black solid;
+  border-radius: 5px;
+  margin: 2px;
+  font-size: 45px;
+  grid-column-start: 1;
+  grid-column-end: -1;
+  grid-row-start: 3;
+  grid-row-end: 4;
 }
 .store{
   display: flex;
+  justify-content: center;
+  align-items: center;
   border: 1px black solid;
   border-radius: 5px;
   margin: 2px;
+  font-size: 45px;
 }
 .pocket{
   display: flex;
+  justify-content: center;
+  align-items: center;
   border: 1px black solid;
   border-radius: 5px;
   margin: 2px;
+  font-size: 45px;
 }
-.player-1-store{
+/* This is the store for player one. Called 6 for convenience */
+.store-6{
+  background-color: rgb(197, 191, 191);    
   grid-column-start: 8;
   grid-column-end: 9;
   grid-row-start: 1;
   grid-row-end: 3;
 }
-.player-2-store{
+
+/* This is the store for player two, called 13 for convenience */
+.store-13{
   grid-column-start: 1;
   grid-column-end: 2;
   grid-row-start: 1;
   grid-row-end: 3;
 }
-.player-1-pocket-0{
+.pocket-0{
   grid-row-start: 2;
   grid-row-end: 3;
   grid-column-start: 2;
   grid-column-end: 3;
+  background-color: rgb(197, 191, 191);
 }
-.player-1-pocket-1{
+.pocket-1{
   grid-row-start: 2;
   grid-row-end: 3;
   grid-column-start: 3;
   grid-column-end: 4;
+  background-color: rgb(197, 191, 191);
 }
-.player-1-pocket-2{
+.pocket-2{
   grid-row-start: 2;
   grid-row-end: 3;
   grid-column-start: 4;
   grid-column-end: 5;
+  background-color: rgb(197, 191, 191);
 }
-.player-1-pocket-3{
+.pocket-3{
   grid-row-start: 2;
   grid-row-end: 3;
   grid-column-start: 5;
   grid-column-end: 6;
+  background-color: rgb(197, 191, 191);
 }
-.player-1-pocket-4{
+.pocket-4{
   grid-row-start: 2;
   grid-row-end: 3;
   grid-column-start: 6;
   grid-column-end: 7;
+  background-color: rgb(197, 191, 191);
 }
-.player-1-pocket-5{
+.pocket-5{
   grid-row-start: 2;
   grid-row-end: 3;
   grid-column-start: 7;
   grid-column-end: 8;
+  background-color: rgb(197, 191, 191);
 }
-.player-2-pocket-0{
+.pocket-12{
   grid-row-start: 1;
   grid-row-end: 2;
   grid-column-start: 2;
   grid-column-end: 3;
 }
-.player-2-pocket-1{
+.pocket-11{
   grid-row-start: 1;
   grid-row-end: 2;
   grid-column-start: 3;
   grid-column-end: 4;
 }
-.player-2-pocket-2{
+.pocket-10{
   grid-row-start: 1;
   grid-row-end: 2;
   grid-column-start: 4;
   grid-column-end: 5;
 }
-.player-2-pocket-3{
+.pocket-9{
   grid-row-start: 1;
   grid-row-end: 2;
   grid-column-start: 5;
   grid-column-end: 6;
 }
-.player-2-pocket-4{
+.pocket-8{
   grid-row-start: 1;
   grid-row-end: 2;
   grid-column-start: 6;
   grid-column-end: 7;
 }
-.player-2-pocket-5{
+.pocket-7{
   grid-row-start: 1;
   grid-row-end: 2;
   grid-column-start: 7;
