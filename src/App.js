@@ -38,16 +38,15 @@ function Board(){
   boardComponents.push(<TurnBox state={state} key = "TurnBox"/>)
 
   //this is for the general moving function
-  function playerMove(position) {
+  function playerMove(position, boardState = [...state.board]) {
     position = Number(position);
-    let newBoard = [...state.board];
+    let newBoard = boardState;
     let amountToDistribute = newBoard[position];
     newBoard[position] = 0;
     let currPos = position + 1;
     //for player 1, do move functionality
     if (state.turnCounter === 0) {
       while (amountToDistribute > 0) {
-        console.log(currPos, newBoard[currPos]);
         if (currPos === 13) currPos = 0;
         newBoard[currPos] += 1;
         currPos++;
@@ -80,36 +79,84 @@ function Board(){
       }
     }
     return newBoard;
-    // setState({ board: newBoard, turnCounter: state.turnCounter === 0 ? 1 : 0});
   }
   function resetState(position) {
     setState({ board: playerMove(position), turnCounter: state.turnCounter === 0 ? 1 : 0 })
   }
-  function isGameOver(){
-    let player1Set = new Set(state.board.slice(0, 6));
-    let player2Set = new Set(state.board.slice(7, 13));
+  function isGameOver(board = [...state.board]){
+    let player1Set = new Set(board.slice(0, 6));
+    let player2Set = new Set(board.slice(7, 13));
     if ((player1Set.size === 1 && player1Set.has(0)) || (player2Set.size === 1 && player2Set.has(0))) return true;
     return false;
   }
-  function scoreGame() {
-    if (state.board[6] > state.board[13]) return "Player 1 won";
-    else if (state.board[13] > state.board[6]) return "Player 2 won";
+  function scoreGame(board = [...state.board]) {
+    // console.log("Scoring the board: ", board);
+    if (board[6] > board[13]) return "Player 1 won";
+    else if (board[13] > board[6]) return "Player 2 won";
     else return "Draw";
   }
-  // function findBestMove() {
-  //   let boardState = [...state.board];
-  //   let bestScore = -Infinity;
-  //   let bestMove;
-  //   for (let i=0; i<boardState.length; i++){
-  //     if (i === 6 || i === 13) continue;
-  //     if (boardState[i] === 0) continue;
-      
-  //     let currScore = miniMax(boardState)
-  //   }
-  // } 
+  function findBestMove() {
+    let boardState = [...state.board];
+    let bestScore = -Infinity;
+    let bestMove;
+    for (let i=0; i<boardState.length; i++){
+      if (i === 6 || i === 13) continue;
+      if (boardState[i] === 0) continue;
+      let newBoard = playerMove(i, boardState);
+      let currScore = miniMax(newBoard, false, 5);
+      if (currScore > bestScore) {
+        bestScore = currScore;
+        bestMove = i;
+      }
+    }
+    // console.log("Best score: ",bestScore, "Best move: ", bestMove);
+    return bestMove;
+  }
+  function miniMax(board, isMaxismizing, depth){
+    // console.log('called miniMax')
+    if (isGameOver(board)){
+      let score = scoreGame(board);
+      if (score === "Player 1 won") return -Infinity;
+      if (score === "Player 2 won") return Infinity;
+    }
+    if (depth === 0){
+      return board[13] - board[6];
+    }
+    if (isMaxismizing){
+      // console.log("Maximizing at depth ", depth);
+      let bestScore = -Infinity;
+      for (let i=0; i<board.length; i++){
+        if (i === 6 || i === 13) continue;
+        if (board[i] === 0) continue;
+        let newBoard = playerMove(i, board);
+        let currScore = miniMax(newBoard, false, depth-1);
+        if (currScore > bestScore){
+          bestScore = currScore
+        }
+      }
+      return bestScore
+    } else {
+      // console.log("Minimizing at depth ", depth);
+
+      let bestScore = Infinity;
+      for (let i=0; i<board.length; i++){
+        if (i === 6 || i === 13) continue;
+        if (board[i] === 0) continue;
+        let newBoard = playerMove(i, board);
+        let currScore = miniMax(newBoard, true, depth - 1);
+        if (currScore < bestScore) {
+          bestScore = currScore
+        }
+      }
+      return bestScore;
+    }
+  } 
 
   useEffect(() => {
-    if (isGameOver() === true) console.log(scoreGame());
+    if (isGameOver() === true) alert(scoreGame());
+    if (state.turnCounter === 1){
+      setTimeout(()=>resetState(findBestMove()), 2000 )
+    }
   })
   
 
