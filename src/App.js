@@ -23,6 +23,7 @@ function Board(){
     board: board,
     turnCounter: 0
   }
+  
   const [state, setState] = useState(obj)
 
   let boardComponents = []; //we will put all the board components in this array.
@@ -38,14 +39,14 @@ function Board(){
   boardComponents.push(<TurnBox state={state} key = "TurnBox"/>)
 
   //this is for the general moving function
-  function playerMove(position, boardState = [...state.board]) {
+  function playerMove(position, boardState = [...state.board], turnCounter = state.turnCounter) {
     position = Number(position);
-    let newBoard = boardState;
+    let newBoard = [...boardState];
     let amountToDistribute = newBoard[position];
     newBoard[position] = 0;
     let currPos = position + 1;
     //for player 1, do move functionality
-    if (state.turnCounter === 0) {
+    if (turnCounter === 0) {
       while (amountToDistribute > 0) {
         if (currPos === 13) currPos = 0;
         newBoard[currPos] += 1;
@@ -102,14 +103,16 @@ function Board(){
     for (let i=0; i<boardState.length; i++){
       if (i === 6 || i === 13) continue;
       if (boardState[i] === 0) continue;
-      let newBoard = playerMove(i, boardState);
+      let newBoard = playerMove(i, boardState, 1);
       let currScore = miniMax(newBoard, false, 5);
+      console.log(currScore)
       if (currScore > bestScore) {
         bestScore = currScore;
         bestMove = i;
       }
     }
     // console.log("Best score: ",bestScore, "Best move: ", bestMove);
+    console.log('best move returns:', bestMove)
     return bestMove;
   }
   function miniMax(board, isMaxismizing, depth){
@@ -128,7 +131,7 @@ function Board(){
       for (let i=0; i<board.length; i++){
         if (i === 6 || i === 13) continue;
         if (board[i] === 0) continue;
-        let newBoard = playerMove(i, board);
+        let newBoard = playerMove(i, board, 1);
         let currScore = miniMax(newBoard, false, depth-1);
         if (currScore > bestScore){
           bestScore = currScore
@@ -142,7 +145,7 @@ function Board(){
       for (let i=0; i<board.length; i++){
         if (i === 6 || i === 13) continue;
         if (board[i] === 0) continue;
-        let newBoard = playerMove(i, board);
+        let newBoard = playerMove(i, board, 0);
         let currScore = miniMax(newBoard, true, depth - 1);
         if (currScore < bestScore) {
           bestScore = currScore
@@ -153,7 +156,7 @@ function Board(){
   } 
 
   useEffect(() => {
-    if (isGameOver() === true) alert(scoreGame());
+    if (isGameOver() === true) setTimeout(alert(scoreGame(), 0));
     if (state.turnCounter === 1){
       setTimeout(()=>resetState(findBestMove()), 2000 )
     }
