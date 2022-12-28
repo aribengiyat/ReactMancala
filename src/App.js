@@ -45,6 +45,7 @@ function Board(){
     let amountToDistribute = newBoard[position];
     newBoard[position] = 0;
     let currPos = position + 1;
+    let moveAgain = false;
     //for player 1, do move functionality
     if (turnCounter === 0) {
       while (amountToDistribute > 0) {
@@ -54,6 +55,7 @@ function Board(){
         amountToDistribute--;
       }
       currPos -= 1;
+      if (currPos === 6) moveAgain = true;
       if (currPos !== 6) {
         if (newBoard[currPos] === 1) {
           //grab from other side
@@ -71,6 +73,7 @@ function Board(){
         amountToDistribute--;
       }
       currPos -= 1;
+      if (currPos === 13) moveAgain = true;
       if (currPos !== 13){
         if (newBoard[currPos] === 1){
           let temp = newBoard[12-currPos];
@@ -79,10 +82,14 @@ function Board(){
         }
       }
     }
-    return newBoard;
+    return [newBoard, moveAgain];
   }
   function resetState(position) {
-    setState({ board: playerMove(position), turnCounter: state.turnCounter === 0 ? 1 : 0 })
+    const moveResult = playerMove(position);
+    if (moveResult[1]) {
+      setState({ board: moveResult[0], turnCounter: state.turnCounter});
+    }
+    else setState({ board: moveResult[0], turnCounter: state.turnCounter === 0 ? 1 : 0 })
   }
   function isGameOver(board = [...state.board]){
     let player1Set = new Set(board.slice(0, 6));
@@ -103,9 +110,13 @@ function Board(){
     for (let i=0; i<boardState.length; i++){
       if (i === 6 || i === 13) continue;
       if (boardState[i] === 0) continue;
-      let newBoard = playerMove(i, boardState, 1);
-      let currScore = miniMax(newBoard, false, 5);
-      console.log(currScore)
+      let boardInfo = playerMove(i, boardState, 1);
+      let newBoard = boardInfo[0];
+      let currScore;
+      if (newBoard[1]){
+        currScore = miniMax(newBoard, true, 5);
+      }else{
+        currScore = miniMax(newBoard, false, 5);      }
       if (currScore > bestScore) {
         bestScore = currScore;
         bestMove = i;
@@ -116,7 +127,6 @@ function Board(){
     return bestMove;
   }
   function miniMax(board, isMaxismizing, depth){
-    // console.log('called miniMax')
     if (isGameOver(board)){
       let score = scoreGame(board);
       if (score === "Player 1 won") return -Infinity;
@@ -131,8 +141,14 @@ function Board(){
       for (let i=0; i<board.length; i++){
         if (i === 6 || i === 13) continue;
         if (board[i] === 0) continue;
-        let newBoard = playerMove(i, board, 1);
-        let currScore = miniMax(newBoard, false, depth-1);
+        let boardInfo = playerMove(i, board, 1);
+        let newBoard = boardInfo[0];
+        let currScore;
+        if (boardInfo[1]) {
+          currScore = miniMax(newBoard, true, depth - 1);
+        } else {
+          currScore = miniMax(newBoard, false, depth - 1);
+        }
         if (currScore > bestScore){
           bestScore = currScore
         }
@@ -145,8 +161,14 @@ function Board(){
       for (let i=0; i<board.length; i++){
         if (i === 6 || i === 13) continue;
         if (board[i] === 0) continue;
-        let newBoard = playerMove(i, board, 0);
-        let currScore = miniMax(newBoard, true, depth - 1);
+        let boardInfo = playerMove(i, board, 1);
+        let newBoard = boardInfo[0];
+        let currScore;
+        if (boardInfo[1]) {
+          currScore = miniMax(newBoard, false, depth - 1);
+        } else {
+          currScore = miniMax(newBoard, true, depth - 1);
+        }
         if (currScore < bestScore) {
           bestScore = currScore
         }
